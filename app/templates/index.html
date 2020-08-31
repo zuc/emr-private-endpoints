@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.css">
+    <title>EMR private endpoints</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>EMR clusters</h1>
+
+      <table class="table" id="table">
+      </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.js"></script>
+
+    <script>
+      const statusFormatter = (value) => {
+        const flavor = value == 'RUNNING' ? 'success' : 'secondary'
+        return `<span class="badge badge-${flavor}">${value}</span>`
+      }
+
+      const linksFormatter = (value) => {
+        return `
+          <a class="btn btn-primary btn-sm" target="_blank" href="http://${value}/ganglia">Ganglia</a>
+          <a class="btn btn-primary btn-sm" target="_blank" href="https://${value}:50470/">Hadoop HDFS</a>
+          <a class="btn btn-primary btn-sm" target="_blank" href="http://${value}:16010/">HBase</a>
+          <a class="btn btn-primary btn-sm" target="_blank" href="http://${value}:8888/">Hue</a>
+          <a class="btn btn-primary btn-sm" target="_blank" href="https://${value}:9443/">JupyterHub</a>
+          <a class="btn btn-primary btn-sm" target="_blank" href="http://${value}:8998/">Livy</a>
+          <a class="btn btn-primary btn-sm" target="_blank" href="http://${value}:18080/">Spark HistoryServer</a>
+          <a class="btn btn-primary btn-sm" target="_blank" href="http://${value}:8080/tez-ui">Tez</a>
+          <a class="btn btn-primary btn-sm" target="_blank" href="http://${value}:8088/">YARN ResourceManager</a>
+          <a class="btn btn-primary btn-sm" target="_blank" href="http://${value}:8890/">Zeppelin</a>
+        `
+      }
+
+      $('#table').bootstrapTable({
+        url: 'clusters.json',
+        pagination: true,
+        search: true,
+        columns: [
+          {
+            field: 'name',
+            title: 'Name',
+            sortable: true,
+          },
+          {
+            field: 'status',
+            title: 'Status',
+            formatter: statusFormatter,
+            sortable: true,
+          },
+          {
+            field: 'master_private_ip',
+            title: 'Web interfaces',
+            formatter: linksFormatter,
+            searchable: false,
+          },
+        ]
+      })
+    </script>
+  </body>
+</html>
